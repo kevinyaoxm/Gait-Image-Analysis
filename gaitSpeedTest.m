@@ -28,6 +28,76 @@ end
 %%%%%%%%%%%
 imshow(imadjust(yuvImg(:,:,1)));
 
+%% extarct green section
+for j = 1:1502
+    % get the previous and next image
+    imageIndexName_prev = [sprintf('%03d',j) '.jpg'];
+    img_prev = imread(fullfile('test_data','images',imageIndexName_prev));
+
+    img_prev = double(img_prev);
+    [row, col] = size(img);
+    dist_img = zeros(row,col);
+    
+    for i=1:row
+        for k=1:col
+            dist_img(i,k) = sqrt(double((img_prev(i,k,1)-0)^2 + (img_prev(i,k,2)-255)^2 + (img_prev(i,k,3)-0)^2));
+        end
+    end
+    
+    % threshold
+    index_green = dist_img < 198; 
+        
+    final_img = zeros(row,col);
+    for i=1:row 
+        for k=1:col 
+            if index_green(i,k) == 1 
+                final_img(i,k)=255; 
+            else 
+                final_img(i,k)=0; 
+            end
+        end 
+    end
+    
+    
+    imshow(final_img)    
+    break;
+end
+%% Green output test
+for iter=298:453
+
+    imageIndexName_prev = [sprintf('%03d',iter) '.jpg'];
+    img_prev = imread(fullfile('test_data','images',imageIndexName_prev));
+
+    img_prev = double(img_prev);
+    [row, col] = size(img);
+    dist_img = zeros(row,col);
+    
+    for i=1:row
+        for k=1:col
+            dist_img(i,k) = sqrt(double((img_prev(i,k,1)-0)^2 + (img_prev(i,k,2)-255)^2 + (img_prev(i,k,3)-0)^2));
+        end
+    end
+    
+    % threshold
+    index_green = dist_img < 198; 
+        
+    final_img = zeros(row,col);
+    for i=1:row 
+        for k=1:col 
+            if index_green(i,k) == 1 
+                final_img(i,k)=255; 
+            else 
+                final_img(i,k)=0; 
+            end
+        end 
+    end
+    
+    seg_filename = [sprintf('%03d',iter) '.jpg'];
+    seg_fullname = fullfile('test_data','gre_output',seg_filename);
+    imwrite(final_img,seg_fullname);
+end
+
+
 %% data segmentation
 count = i-1;
 for k=1:count
