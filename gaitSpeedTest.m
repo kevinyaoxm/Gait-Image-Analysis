@@ -128,7 +128,7 @@ for k=1:count
 end
 %% Pixel difference domain 
 
-%count = i-1;
+count = i-1;
 for i=1:count
    
    % get the previous and next image
@@ -244,3 +244,30 @@ BW2 = edge(I,'canny');
 figure;
 imshowpair(BW1,BW2,'montage')
 title('Sobel Filter                                   Canny Filter');
+
+%% graph the white intensity over frame
+
+count = 1227;
+S = zeros(1,count);
+for i=1:count
+   
+   % get the previous and next image
+   imageIndexName_curr = [sprintf('%03d',i) '.jpg'];
+   img_curr = double(imread(fullfile('test_data','diff_threshold',imageIndexName_curr)));
+   img = clear_noise(img_curr);
+   S(i) = sum(sum(img));
+   
+end 
+
+figure
+x = 1:size(S, 2);
+plot (x, S);
+hold on;
+plot ([1, count], [S(1), S(count)],'r^');
+hold off;
+axis tight;
+ylabel('White Intensity');
+xlabel('Time elapsed in 1 frame');
+title('Gait Test Event Intensty Over Time');
+   
+   
