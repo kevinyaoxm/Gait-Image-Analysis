@@ -91,7 +91,6 @@ for iter=298:453
             end
         end 
     end
-    
     seg_filename = [sprintf('%03d',iter) '.jpg'];
     seg_fullname = fullfile('test_data','gre_output',seg_filename);
     imwrite(final_img,seg_fullname);
@@ -129,22 +128,26 @@ for k=1:count
 end
 %% Pixel difference domain 
 
-count = i-1;
+%count = i-1;
 for i=1:count
    
    % get the previous and next image
    imageIndexName_prev = [sprintf('%03d',i) '.jpg'];
    imageIndexName_next = [sprintf('%03d',i+1) '.jpg'];
-   img_prev = imread(fullfile('test_data','yuv_images',imageIndexName_prev));
-   img_next = imread(fullfile('test_data','yuv_images',imageIndexName_next));
-   
-   
+   img_prev = double(imread(fullfile('test_data','yuv_images',imageIndexName_prev)));
+   img_next = double(imread(fullfile('test_data','yuv_images',imageIndexName_next)));
    
    % write to the file
-   diff_image = imadjust(img_next-img_prev);
+   diff_image = abs(img_next-img_prev);
+   [row, col] = size(diff_image);
+   diff_index = diff_image >= 15;
+   result_img = zeros(row, col);
+   result_img(diff_index) = diff_image(diff_index);
+ 
+   
    diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile('test_data','diff_images',diff_filename);
-   imwrite(diff_image,diff_fullname);
+   diff_fullname = fullfile('test_data','diff_threshold',diff_filename);
+   imwrite(result_img,diff_fullname);
 end
 
 
