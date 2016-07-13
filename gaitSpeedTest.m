@@ -128,7 +128,7 @@ for k=1:count
 end
 %% Pixel difference domain 
 
-count = i-1;
+count = 1227;
 for i=1:count
    
    % get the previous and next image
@@ -140,14 +140,18 @@ for i=1:count
    % write to the file
    diff_image = abs(img_next-img_prev);
    [row, col] = size(diff_image);
-   diff_index = diff_image >= 15;
+   diff_index = diff_image >= 18;
    result_img = zeros(row, col);
    result_img(diff_index) = diff_image(diff_index);
  
+   gpu_img = gpuArray(result_img);
+   result_img = gather(medfilt2(gpu_img, [3 3]));
    
    diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile('test_data','diff_threshold',diff_filename);
+   diff_fullname = fullfile('test_data','diff_medfilt',diff_filename);
    imwrite(result_img,diff_fullname);
+   
+   fprintf('%d\n', i);
 end
 
 
@@ -254,8 +258,9 @@ for i=1:count
    % get the previous and next image
    imageIndexName_curr = [sprintf('%03d',i) '.jpg'];
    img_curr = double(imread(fullfile('test_data','diff_threshold',imageIndexName_curr)));
-   img = clear_noise(img_curr);
-   S(i) = sum(sum(img));
+   %img = clear_noise(img_curr);
+   S(i) = sum(sum(img_curr));
+  
    
 end 
 
