@@ -1,6 +1,6 @@
 %% Reading the Input RGB Video, get Y channal of yuv domain
 
-inputRGBVideo = VideoReader('test_data2/SitStand2.mp4');
+inputRGBVideo = VideoReader('test_data2/SitStand3.mp4');
 
 % Get the frame of RGB Video and convert each picture to YUV color space
 i = 1;
@@ -19,7 +19,8 @@ while hasFrame(inputRGBVideo)
       yuvImg = imadjust(yuvImg_pre(:,:,1));
       
       yuvImg(:, 1550:1920) = 0;
-      
+      yuvImg(:, 1:830) = 0;
+
       yuv_filename = [sprintf('%03d',i) '.jpg'];
       yuv_fullname = fullfile('test_data2','yuv_images2',yuv_filename);
       imwrite(yuvImg,yuv_fullname);
@@ -29,7 +30,8 @@ end
 
 %% Get the pixel difference images with individual and area threshold
 
-count = i - 1;
+% count = i - 1;
+count = 239;
 for i=1:count
    
    % get the previous and next image | diff_images - "diff"
@@ -52,8 +54,9 @@ for i=1:count
 end
 
 
-%% Clear the noise in images with medium filter and recCleanNoise   
+% Clear the noise in images with medium filter and recCleanNoise   
 
+count = 240;
 for i=1:count
    
    % Read images from files
@@ -73,7 +76,7 @@ end
 
 %% Apply median filter in time dimension
 
-count = 1267/15;
+count = uint32(240/15);
 i = 0;
 for iter=1:count
     i = i+1;
@@ -127,7 +130,7 @@ title('Gait Test Event Intensty Over Time');
 
 %% Calculate the position of the person by the original RGB video
 
-count = 270;
+count = 1260;
 
 for itera=1:count
     itera
@@ -258,8 +261,8 @@ end
 
 %% Calculate the position of the person by the original RGB video
 
-count = 270;
-S = zeros(1, 345);
+count = 1260;
+S = zeros(1, 1260);
 for itera=1:count
 
     imageIndexName = [sprintf('%03d',itera) '.jpg'];
