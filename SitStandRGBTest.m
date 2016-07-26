@@ -1,11 +1,116 @@
+%% Reading the Input RGB Video, get Y channal of yuv domain
+
+inputRGBVideo = VideoReader('test_data2/SitStand3.mp4');
+
+% Get the frame of RGB Video and convert each picture to YUV color space
+i = 1;
+while hasFrame(inputRGBVideo)
+    
+    % read image frame from original RGB Video
+    % save image jpg file to images folder
+    img = readFrame(inputRGBVideo);
+   
+      filename = [sprintf('%03d',i) '.jpg'];
+      fullname = fullfile('test_data2','images2',filename);
+      imwrite(img,fullname);
+   
+      % map jpg image frame from rgb to yuv color space
+      yuvImg_pre = rgb2ycbcr(img);
+      yuvImg = imadjust(yuvImg_pre(:,:,1));
+      
+      yuvImg(:, 1550:1920) = 0;
+      yuvImg(:, 1:830) = 0;
+
+      yuv_filename = [sprintf('%03d',i) '.jpg'];
+      yuv_fullname = fullfile('test_data2','yuv_images2',yuv_filename);
+      imwrite(yuvImg,yuv_fullname);
+ 
+   i = i+1;
+end
+
+%% Get the pixel difference images with individual and area threshold
+
+% count = i - 1;
+count = 239;
+for i=1:count
+   
+   % get the previous and next image | diff_images - "diff"
+   imageIndexName_prev = [sprintf('%03d',i) '.jpg'];
+   imageIndexName_next = [sprintf('%03d',i+1) '.jpg'];
+   img_prev = double(imread(fullfile('test_data2','yuv_images2',imageIndexName_prev)));
+   img_next = double(imread(fullfile('test_data2','yuv_images2',imageIndexName_next)));
+   
+   % Pixel difference threshold
+   diff_image = abs(img_next-img_prev);
+   [row, col] = size(diff_image);
+   diff_index = diff_image >= 18;
+   result_img = zeros(row, col);
+   result_img(diff_index) = diff_image(diff_index);
+  
+   % write to the file | diff_threshold2 - "diff_threshold"
+   diff_filename2 = [sprintf('%03d',i) '.jpg'];
+   diff_fullname2 = fullfile('test_data2','diff_threshold2',diff_filename2);
+   imwrite(result_img,diff_fullname2);
+end
+
+
+% Clear the noise in images with medium filter and recCleanNoise   
+
+count = 240;
+for i=1:count
+   
+   % Read images from files
+   imageIndexName = [sprintf('%03d',i) '.jpg'];
+   img = double(imread(fullfile('test_data2','diff_threshold2',imageIndexName)));
+   
+   % Use medium filter to clean the noise
+   img_mf = medfilt2(img, [3 3]);
+   
+   % Use recCleanNoise to clean the noise
+   % result_img = recCleanNoise(img, 70000);
+   
+   diff_filename = [sprintf('%03d',i) '.jpg'];
+   diff_fullname = fullfile('test_data2','diff_mf_threshold22',diff_filename);
+   imwrite(uint8(img_mf),diff_fullname);
+end
+
+%% Apply median filter in time dimension
+
+count = uint32(240/15);
+i = 0;
+for iter=1:count
+    i = i+1;
+    iter
+    imageIndexName1 = [sprintf('%03d',i) '.jpg'];
+    img_stack = double(imread(fullfile('test_data2','diff_mf_threshold22',imageIndexName1)));
+        
+    for iter2=2:15
+        i = i+1;
+        % Read images from files
+        imageIndexName = [sprintf('%03d',i) '.jpg'];
+        img = double(imread(fullfile('test_data2','diff_mf_threshold22',imageIndexName)));
+        img_stack = cat(3, img_stack, img);
+    end
+       
+    % Use medium filter to clean the noise
+    B = medfilt3(img_stack,[3 3 3]);  
+   
+    i = i-15;
+    for iter2=1:15
+        i = i+1;
+        diff_filename = [sprintf('%03d',i) '.jpg'];
+        diff_fullname = fullfile('test_data2','diff_mf_threshold33',diff_filename);
+        imwrite(uint8(B(:,:,iter2)),diff_fullname);
+    end
+end
 %% graph the white intensity over frame
  
-count = 345;
+count = 225;
 S = zeros(1,count);
 for i=1:count
     % get the previous and next image
     imageIndexName_curr = [sprintf('%03d',i) '.jpg'];
-    img_curr = double(imread(fullfile('test_data2','diff_mf_threshold3',imageIndexName_curr)));
+    img_curr = double(imread(fullfile('test_data2','diff_mf_threshold33',imageIndexName_curr)));
     S(i) = sum(sum(img_curr));
 end
  
@@ -24,12 +129,12 @@ title('Gait Test Event Intensty Over Time');
 
 %% Calculate the position of the person by the original RGB video
 
-count = 345;
-leng = zeros(1, 345);
+count = 225;
+leng = zeros(1, 225);
 for itera=1:count
 
     imageIndexName = [sprintf('%03d',itera) '.jpg'];
-    img = double(imread(fullfile('test_data2','diff_mf_threshold3',imageIndexName)));
+    img = double(imread(fullfile('test_data2','diff_mf_threshold33',imageIndexName)));
 
     thresholdValue = 240;
 
@@ -152,11 +257,12 @@ x = 1:length(leng_smooth);
 plot (x, leng_smooth);
 hold on;
 plot(MaxIdx, leng_smooth(MaxIdx),'r^');
-plot(timeStamp, leng_smooth(uint8(timeStamp)),'b^');
+plot(timeStamp, leng_smooth(uint64(timeStamp)),'b^');
 hold off;
 axis tight;
 
-% figure for displaying three different kinds of time stamp
+
+%% figure for displaying three different kinds of time stamp
 
 figure
 x = 1:length(leng_smooth);
