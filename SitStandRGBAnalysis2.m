@@ -228,3 +228,10 @@ plot(MaxIdx, leng_smooth(MaxIdx),'r^');
 plot(timeStamp, leng_smooth(uint64(timeStamp)),'b^');
 hold off;
 axis tight;
+
+% Print out the time stamp table for SitStand Test 
+SitStandCount = {'1','2','3','4','5'};
+T = table;
+T.SitStandCount = SitStandCount';
+T.StartTimeStamp = timeStamp(1:5)';
+T.StopTimeStamp = timeStamp(2:6)';
