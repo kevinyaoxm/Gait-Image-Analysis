@@ -1,6 +1,8 @@
 %% Reading the Input RGB Video
 
-inputRGBVideo = VideoReader('test_data2/SitStand4.mp4');
+inputRGBVideo = VideoReader('test_data2/SitStand5.mp4');
+
+fprintf('Reading Input Video and Computing frames in yuv Y-channel.\n') ;
 
 % Get the frame of RGB Video and convert each picture to YUV color space
 i = 1;
@@ -11,7 +13,7 @@ while hasFrame(inputRGBVideo)
     img = readFrame(inputRGBVideo);
    
     filename = [sprintf('%03d',i) '.jpg'];
-    fullname = fullfile('test_data2','images3',filename);
+    fullname = fullfile('test_data2','images4',filename);
     imwrite(img,fullname);
 
     % map jpg image frame from rgb to yuv color space
@@ -24,12 +26,14 @@ while hasFrame(inputRGBVideo)
     yuvImg(:, 1:830) = 0;
 
     yuv_filename = [sprintf('%03d',i) '.jpg'];
-    yuv_fullname = fullfile('test_data2','yuv_images3',yuv_filename);
+    yuv_fullname = fullfile('test_data2','yuv_images4',yuv_filename);
     imwrite(yuvImg,yuv_fullname);
     i = i+1;
 end
 
 %% Get the pixel difference images with individual and area threshold
+
+fprintf('Computing Pixel Difference Image.\n') ;
 
 frame_count = i - 2;
 for i=1:frame_count
@@ -37,8 +41,8 @@ for i=1:frame_count
    % get the previous and next image | diff_images - "diff"
    imageIndexName_prev = [sprintf('%03d',i) '.jpg'];
    imageIndexName_next = [sprintf('%03d',i+1) '.jpg'];
-   img_prev = double(imread(fullfile('test_data2','yuv_images3',imageIndexName_prev)));
-   img_next = double(imread(fullfile('test_data2','yuv_images3',imageIndexName_next)));
+   img_prev = double(imread(fullfile('test_data2','yuv_images4',imageIndexName_prev)));
+   img_next = double(imread(fullfile('test_data2','yuv_images4',imageIndexName_next)));
    
    % Pixel difference threshold
    diff_image = abs(img_next-img_prev);
@@ -49,8 +53,9 @@ for i=1:frame_count
   
    % write to the file | diff_threshold2 - "diff_threshold"
    diff_filename2 = [sprintf('%03d',i) '.jpg'];
-   diff_fullname2 = fullfile('test_data2','diff_threshold3',diff_filename2);
+   diff_fullname2 = fullfile('test_data2','diff_threshold4',diff_filename2);
    imwrite(result_img,diff_fullname2);
+   
 end
 
 
@@ -60,14 +65,14 @@ for i=1:frame_count
    
    % Read images from files
    imageIndexName = [sprintf('%03d',i) '.jpg'];
-   img = double(imread(fullfile('test_data2','diff_threshold3',imageIndexName)));
+   img = double(imread(fullfile('test_data2','diff_threshold4',imageIndexName)));
    
    % Use medium filter to clean the noise
    img_mf = medfilt2(img, [3 3]);
    
    % Save processed frames to file
    diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile('test_data2','diff_mf_threshold222',diff_filename);
+   diff_fullname = fullfile('test_data2','diff_mf_threshold2222',diff_filename);
    imwrite(uint8(img_mf),diff_fullname);
 
 end
@@ -82,12 +87,12 @@ for iter=1:count_3d
     % box
     i = i+1;
     imageIndexName1 = [sprintf('%03d',i) '.jpg'];
-    img_stack = double(imread(fullfile('test_data2','diff_mf_threshold222',imageIndexName1)));
+    img_stack = double(imread(fullfile('test_data2','diff_mf_threshold2222',imageIndexName1)));
 
     for iter2=2:15
         i = i+1;
         imageIndexName = [sprintf('%03d',i) '.jpg'];
-        img = double(imread(fullfile('test_data2','diff_mf_threshold222',imageIndexName)));
+        img = double(imread(fullfile('test_data2','diff_mf_threshold2222',imageIndexName)));
         img_stack = cat(3, img_stack, img);
     end
        
@@ -99,7 +104,7 @@ for iter=1:count_3d
     for iter2=1:15
         i = i+1;
         diff_filename = [sprintf('%03d',i) '.jpg'];
-        diff_fullname = fullfile('test_data2','diff_mf_threshold333',diff_filename);
+        diff_fullname = fullfile('test_data2','diff_mf_threshold3333',diff_filename);
         imwrite(uint8(B(:,:,iter2)),diff_fullname);
     end
     
@@ -110,7 +115,7 @@ count = i;
 S = zeros(1,count);
 for i=1:count
     imageIndexName = [sprintf('%03d',i) '.jpg'];
-    img_curr = double(imread(fullfile('test_data2','diff_mf_threshold3',imageIndexName)));
+    img_curr = double(imread(fullfile('test_data2','diff_mf_threshold333',imageIndexName)));
     S(i) = sum(sum(img_curr));
 end
  
@@ -133,7 +138,7 @@ leng = zeros(1, count);
 for itera=1:count
 
     imageIndexName = [sprintf('%03d',itera) '.jpg'];
-    img = double(imread(fullfile('test_data2','diff_mf_threshold3',imageIndexName)));
+    img = double(imread(fullfile('test_data2','diff_mf_threshold3333',imageIndexName)));
 
     thresholdValue = 240;
 
@@ -165,7 +170,8 @@ for itera=1:count
         end
     end
     
-    midpoint = vertical_stop_index - vertical_start_index;
+    %midpoint = vertical_stop_index - vertical_start_index;
+    midpoint = vertical_start_index;
     leng(itera) = midpoint;
     
 end
@@ -183,12 +189,26 @@ ylabel('Y-coordinate of midpoint');
 xlabel('Time elapsed in 1 frame');
 title('SitStand Test Event Intensty Over Time');
 
-% Find the maxima and minima point
-[Maxima,MaxIdx] = findpeaks(leng_smooth, 'MinPeakDistance', 30, 'MinPeakHeight',750);
-DataInv = 1.01*max(leng_smooth) - leng_smooth;
-[Minima,MinIdx] = findpeaks(DataInv, 'MinPeakHeight', 110);
+% leng_smooth(leng_smooth > 400) = 0; 
 
-%%
+fprintf('Computing the time stamp for each Sit-Stand Cycle.\n') ;
+
+% Find the maxima and minima point
+[Maxima,MaxIdx] = findpeaks(leng_smooth, 'MinPeakDistance', 30, 'MinPeakHeight',250);
+DataInv = 1.01*max(leng_smooth) - leng_smooth;
+[Minima,MinIdx] = findpeaks(DataInv, 'MinPeakHeight', 200, 'MinPeakDistance', 30);
+
+Maxima = leng_smooth(MaxIdx);
+
+if length(Maxima) > 6
+    idx = find(Maxima == max(Maxima),1,'first');
+    MaxIdx(idx) = [];
+end
+
+if length(Minima) > 5 
+    idx = find(leng_smooth(MinIdx) == min(leng_smooth(MinIdx)),1,'first');
+    MinIdx(idx) = [];
+end
 
 figure
 x = 1:size(leng_smooth, 1);
@@ -200,6 +220,22 @@ hold off;
 axis tight;
 
 
+%% Print out the time stamp table for SitStand Test 
+
+timeStamp = MaxIdx;
+
+SitStandCount = {'1','2','3','4','5'};
+T = table;
+T.SitStandCount = SitStandCount';
+T.Start = timeStamp(1:5);
+T.Stop = timeStamp(2:6);
+T
+SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
+fprintf('Sit Stand Cycle Duration in frames: ');
+SitStandCycle
+fprintf('Sit Stand Cycle Duration in frames: ') ;
+SitStandCycle/30
+
 %% 
 % Find the time stamp for each sit and stand cycle
 Stand_Time = Maxima;  % The time stamp when the person stand
@@ -209,6 +245,9 @@ Start_Time = []; % The time stamp when the person stand up for the next cycle
 length(Stand_Time); % should be 5
 Stand_Time = Stand_Time(1:5);
 
+if length(MaxIdx) >= 6 
+    MaxIdx = MaxIdx(2:6)
+end
 
 for i = 2:length(MaxIdx)
     Sitdown_TimeIdx = MinIdx(MinIdx < MaxIdx(i) & (MinIdx > MaxIdx(i-1)));
@@ -227,9 +266,7 @@ for i=1:4
 end
 
 % Find the beginning time stamp of the sit and stand test
-StandingIntensity = S_smooth(MaxIdx);
-StandingIntensity_Avg = mean(StandingIntensity);
-[~, fir] = min(S_smooth-StandingIntensity_Avg);
+fir = timeStamp(1) - (timeStamp(2) - timeStamp(1));
 timeStamp = [fir timeStamp Stop_Time(end)]
 
 % figure for displaying two time stamps
