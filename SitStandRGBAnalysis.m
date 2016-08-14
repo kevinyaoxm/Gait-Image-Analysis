@@ -1,3 +1,4 @@
+%% Script for analyzing the Sit-Stand Test RGB Video
 %% Reading the Input RGB Video
 
 inputRGBVideo = VideoReader('test_data2/SitStand5.mp4');
