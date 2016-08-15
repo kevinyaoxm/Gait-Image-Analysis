@@ -140,6 +140,8 @@ title('SitStand Test Event Intensty Over Time');
 % count = 345;    % diff_mf_threshold333
 count = 315;  % diff_mf_threshold3333
 
+% From This line to the line with equal signs for box bounding algorithm
+
 leng = zeros(1, count);
 for itera=1:count
 
@@ -181,6 +183,8 @@ for itera=1:count
     leng(itera) = midpoint;
     
 end
+
+%===================================================================================================
 
 leng_smooth = smooth(leng,15);
 
