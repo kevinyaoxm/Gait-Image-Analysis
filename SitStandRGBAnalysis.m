@@ -239,7 +239,7 @@ T
 SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
 fprintf('Sit Stand Cycle Duration in frames: \n');
 disp(SitStandCycle);
-fprintf('Sit Stand Cycle Duration in frames: \n') ;
+fprintf('Sit Stand Cycle Duration in seconds: \n') ;
 disp(SitStandCycle/30);
 
 figure;
