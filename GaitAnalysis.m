@@ -3,6 +3,8 @@
 inputRGBVideo = VideoReader('test_data/WALK.MP4');
 
 % Get the frame of RGB Video and convert each picture to YUV color space
+
+%%%%%%%%%%%%%%%%%%%%% Get Y channel of YUV image frames starts %%%%%%%%%%%%%%%%%%%
 i = 1;
 while hasFrame(inputRGBVideo)
     
@@ -23,9 +25,12 @@ while hasFrame(inputRGBVideo)
  
    i = i+1;
 end
+%%%%%%%%%%%%%%%%%%%%% Get Y channel of YUV image frames ends %%%%%%%%%%%%%%%%%%%
+
 
 %% Get the pixel difference images with individual and area threshold
 
+%==================== Compute Pixel Difference Image starts ===================
 count = i - 1;
 for i=1:count
    
@@ -47,9 +52,12 @@ for i=1:count
    diff_fullname2 = fullfile('test_data','diff_threshold',diff_filename2);
    imwrite(result_img,diff_fullname2);
 end
+%==================== Compute Pixel Difference Image ends ===================
 
-%% Clear the noise in images with medium filter and recCleanNoise   
 
+%% Clear the noise in images with medium filter   
+
+%~~~~~~~~~~~~~~~ Apply medium filter on spacital domain starts ~~~~~~~~~~~~~~~~~
 count = 1207;
 for i=1:count
    
@@ -67,9 +75,13 @@ for i=1:count
    diff_fullname = fullfile('test_data','diff_mf_threshold',diff_filename);
    imwrite(uint8(img_mf),diff_fullname);
 end
+%~~~~~~~~~~~~~~~ Apply medium filter on spacital domain ends ~~~~~~~~~~~~~~~~~
+
+
 
 %% Apply median filter in time dimension
 
+%=%=%=%=%=%=%=%= Apply medium filter on time domain starts %=%=%=%=%=%=%=%=%=%=
 count = 1207/15;
 i = 0;
 for iter=1:count
@@ -97,25 +109,12 @@ for iter=1:count
         imwrite(uint8(B(:,:,iter2)),diff_fullname);
     end
 end
-%% Apply the medium filter again to furthur clean the noise 
+%=%=%=%=%=%=%=%= Apply medium filter on time domain ends %=%=%=%=%=%=%=%=%=%=
 
-count = 1207;
-for i=1:count
-   
-   % Read images from files
-   imageIndexName = [sprintf('%03d',i) '.jpg'];
-   img = double(imread(fullfile('test_data','diff_mf_threshold2',imageIndexName)));
-   
-   % Use medium filter to clean the noise
-   img_mf = medfilt2(img, [4 4]);
-   
-   diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile('test_data','diff_mf_threshold3',diff_filename);
-   imwrite(uint8(img_mf),diff_fullname);
-end
 
 %% Calculate the position of the person by the original RGB video
 
+%~%~%~%~%~%~%~%~%~%~%~%~%~%~% Box bounding algorithm starts %~%~%~%~%~%~%~%~%~%~%~%%~%~%~%~~
 count = 1207;
 for itera=1:count
     imageIndexName = [sprintf('%03d',itera) '.jpg'];
@@ -130,7 +129,6 @@ for itera=1:count
     thresholdValue = 240;
 
     line([thresholdValue, thresholdValue], ylim, 'Color', 'r');
-    img = imfill(img);
     binaryImage = imbinarize(img, 80);
     binaryImage = imfill(binaryImage, 'holes');
     % imshow(binaryImage, []);
@@ -215,12 +213,6 @@ for itera=1:count
     % hold off;
 
     % Plot the box around the person
-
-    vertical_start_index;
-    vertical_stop_index;
-    horizontal_start_index;
-    horizontal_stop_index;
-
     box_width = horizontal_stop_index - horizontal_start_index;
     box_height = vertical_stop_index - vertical_start_index;
     start_x = horizontal_start_index;
@@ -236,8 +228,9 @@ for itera=1:count
     box_filename = [sprintf('%03d',itera) '.jpg'];
     box_fullname = fullfile('test_data','box',box_filename);
     imwrite(I.cdata,box_fullname);
-
 end
+%~%~%~%~%~%~%~%~%~%~%~%~%~%~% Box bounding algorithm ends %~%~%~%~%~%~%~%~%~%~%~%%~%~%~%~~
+
 
 
 %% graph the white intensity over frame

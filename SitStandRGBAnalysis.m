@@ -6,6 +6,8 @@ inputRGBVideo = VideoReader('test_data2/SitStand5.mp4');
 fprintf('Reading Input Video and Computing frames in yuv Y-channel.\n') ;
 
 % Get the frame of RGB Video and convert each picture to YUV color space
+
+%%%%%%%%%%%%%%%%%%%%% Get Y channel of YUV image frames starts %%%%%%%%%%%%%%%%%%%
 i = 1;
 while hasFrame(inputRGBVideo)
     
@@ -31,11 +33,13 @@ while hasFrame(inputRGBVideo)
     imwrite(yuvImg,yuv_fullname);
     i = i+1;
 end
+%%%%%%%%%%%%%%%%%%% Get Y channel of YUV image frames ends %%%%%%%%%%%%%%%%%%%
 
 %% Get the pixel difference images with individual and area threshold
 
 fprintf('Computing Pixel Difference Image.\n') ;
 
+%==================== Compute Pixel Difference Image starts ===================
 frame_count = i - 2;
 for i=1:frame_count
    
@@ -58,10 +62,12 @@ for i=1:frame_count
    imwrite(result_img,diff_fullname2);
    
 end
+%==================== Compute Pixel Difference Image ends ====================
 
 
-% Clear the noise in images with medium filter and recCleanNoise   
+% Clear the noise in images with medium filter
 
+%~~~~~~~~~~~~~~~ Apply medium filter on spacital domain starts ~~~~~~~~~~~~~~~~~
 for i=1:frame_count
    
    % Read images from files
@@ -77,9 +83,11 @@ for i=1:frame_count
    imwrite(uint8(img_mf),diff_fullname);
 
 end
+%~~~~~~~~~~~~~~~ Apply medium filter on spacital domain ends ~~~~~~~~~~~~~~~~~
 
 %% Apply median filter in time dimension
 
+%=%=%=%=%=%=%=%= Apply medium filter on time domain starts %=%=%=%=%=%=%=%=%=%=
 count_3d = uint32(frame_count/15);
 i = 0;
 for iter=1:count_3d
@@ -108,8 +116,9 @@ for iter=1:count_3d
         diff_fullname = fullfile('test_data2','diff_mf_threshold3333',diff_filename);
         imwrite(uint8(B(:,:,iter2)),diff_fullname);
     end
-    
 end
+%=%=%=%=%=%=%=%= Apply medium filter on time domain ends %=%=%=%=%=%=%=%=%=%=
+
 %% graph the white intensity over frame
  
 count = i;
@@ -135,13 +144,7 @@ title('SitStand Test Event Intensty Over Time');
 
 %% Calculate the midpoint of the box around the person
 
-% count = 360;  % count number for diff_mf_threshold3
-% count = 225;  % diff_mf_threshold33
-% count = 345;    % diff_mf_threshold333
-count = 315;  % diff_mf_threshold3333
-
-% From This line to the line with equal signs for box bounding algorithm
-
+%~%~%~%~%~%~%~%~%~%~%~%~%~%~% Box bounding algorithm starts %~%~%~%~%~%~%~%~%~%~%~%%~%~%~%~~
 leng = zeros(1, count);
 for itera=1:count
 
@@ -181,10 +184,8 @@ for itera=1:count
     %midpoint = vertical_stop_index - vertical_start_index;
     midpoint = vertical_start_index;
     leng(itera) = midpoint;
-    
 end
-
-%===================================================================================================
+%~%~%~%~%~%~%~%~%~%~%~%~%~%~% Box bounding algorithm ends %~%~%~%~%~%~%~%~%~%~%~%%~%~%~%~~
 
 leng_smooth = smooth(leng,15);
 
