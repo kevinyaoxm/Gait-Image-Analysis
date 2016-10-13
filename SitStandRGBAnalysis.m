@@ -1,7 +1,22 @@
 %% Script for analyzing the Sit-Stand Test RGB Video
 %% Reading the Input RGB Video
 
-inputRGBVideo = VideoReader('test_data2/SitStand5.mp4');
+
+inputRGBVideo = VideoReader('test_data/MAH00174.MP4');
+
+path_save_dir = 'temp';
+
+% Create folders to hold the processed fils
+path_diff_threshold = 'diff_threshold';
+path_diff_mf_threshold1 = 'diff_mf_threshold1';
+path_diff_mf_threshold2 = 'diff_mf_threshold2';
+path_diff_mf_threshold3 = 'diff_mf_threshold3';
+path_yuv_images = 'yuv_images';
+path_images_dir = 'images';
+
+mkdir(path_save_dir);
+mkdir(path_images_dir);
+mkdir(path_yuv_images);
 
 fprintf('Reading Input Video and Computing frames in yuv Y-channel.\n') ;
 
@@ -16,7 +31,7 @@ while hasFrame(inputRGBVideo)
     img = readFrame(inputRGBVideo);
    
     filename = [sprintf('%03d',i) '.jpg'];
-    fullname = fullfile('test_data2','images4',filename);
+    fullname = fullfile(path_save_dir,path_images_dir,filename);
     imwrite(img,fullname);
 
     % map jpg image frame from rgb to yuv color space
@@ -29,7 +44,7 @@ while hasFrame(inputRGBVideo)
     yuvImg(:, 1:830) = 0;
 
     yuv_filename = [sprintf('%03d',i) '.jpg'];
-    yuv_fullname = fullfile('test_data2','yuv_images4',yuv_filename);
+    yuv_fullname = fullfile(path_save_dir, path_yuv_images,yuv_filename);
     imwrite(yuvImg,yuv_fullname);
     i = i+1;
 end
@@ -46,8 +61,8 @@ for i=1:frame_count
    % get the previous and next image | diff_images - "diff"
    imageIndexName_prev = [sprintf('%03d',i) '.jpg'];
    imageIndexName_next = [sprintf('%03d',i+1) '.jpg'];
-   img_prev = double(imread(fullfile('test_data2','yuv_images4',imageIndexName_prev)));
-   img_next = double(imread(fullfile('test_data2','yuv_images4',imageIndexName_next)));
+   img_prev = double(imread(fullfile(path_save_dir,path_yuv_images,imageIndexName_prev)));
+   img_next = double(imread(fullfile(path_save_dir,path_yuv_images,imageIndexName_next)));
    
    % Pixel difference threshold
    diff_image = abs(img_next-img_prev);
@@ -58,7 +73,7 @@ for i=1:frame_count
   
    % write to the file | diff_threshold2 - "diff_threshold"
    diff_filename2 = [sprintf('%03d',i) '.jpg'];
-   diff_fullname2 = fullfile('test_data2','diff_threshold4',diff_filename2);
+   diff_fullname2 = fullfile(path_save_dir,path_diff_threshold,diff_filename2);
    imwrite(result_img,diff_fullname2);
    
 end
@@ -72,14 +87,14 @@ for i=1:frame_count
    
    % Read images from files
    imageIndexName = [sprintf('%03d',i) '.jpg'];
-   img = double(imread(fullfile('test_data2','diff_threshold4',imageIndexName)));
+   img = double(imread(fullfile(path_save_dir,path_diff_threshold,imageIndexName)));
    
    % Use medium filter to clean the noise
    img_mf = medfilt2(img, [3 3]);
    
    % Save processed frames to file
    diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile('test_data2','diff_mf_threshold2222',diff_filename);
+   diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold1,diff_filename);
    imwrite(uint8(img_mf),diff_fullname);
 
 end
@@ -96,12 +111,12 @@ for iter=1:count_3d
     % box
     i = i+1;
     imageIndexName1 = [sprintf('%03d',i) '.jpg'];
-    img_stack = double(imread(fullfile('test_data2','diff_mf_threshold2222',imageIndexName1)));
+    img_stack = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName1)));
 
     for iter2=2:15
         i = i+1;
         imageIndexName = [sprintf('%03d',i) '.jpg'];
-        img = double(imread(fullfile('test_data2','diff_mf_threshold2222',imageIndexName)));
+        img = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName)));
         img_stack = cat(3, img_stack, img);
     end
        
@@ -113,7 +128,7 @@ for iter=1:count_3d
     for iter2=1:15
         i = i+1;
         diff_filename = [sprintf('%03d',i) '.jpg'];
-        diff_fullname = fullfile('test_data2','diff_mf_threshold3333',diff_filename);
+        diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold3,diff_filename);
         imwrite(uint8(B(:,:,iter2)),diff_fullname);
     end
 end
@@ -125,7 +140,7 @@ count = i;
 S = zeros(1,count);
 for i=1:count
     imageIndexName = [sprintf('%03d',i) '.jpg'];
-    img_curr = double(imread(fullfile('test_data2','diff_mf_threshold333',imageIndexName)));
+    img_curr = double(imread(fullfile(path_save_dir,path_diff_mf_threshold3,imageIndexName)));
     S(i) = sum(sum(img_curr));
 end
  
@@ -149,7 +164,7 @@ leng = zeros(1, count);
 for itera=1:count
 
     imageIndexName = [sprintf('%03d',itera) '.jpg'];
-    img = double(imread(fullfile('test_data2','diff_mf_threshold3333',imageIndexName)));
+    img = double(imread(fullfile(path_save_dir,path_diff_mf_threshold3,imageIndexName)));
 
     thresholdValue = 240;
 
@@ -161,7 +176,7 @@ for itera=1:count
     % Find the start_index and end_index of horizontal_sum
     peak_threshold = 500;
     vertical_start_index = 1;
-    for i=1:length(vertical_sum)-1; % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
+    for i=1:length(vertical_sum)-1 % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
         difference=abs(vertical_sum(i+1)-vertical_sum(i)); % calculate difference between neighboring intensities        
         if difference > peak_threshold % If statement to determine start time index
             vertical_start_index=i;
@@ -173,7 +188,7 @@ for itera=1:count
     peak_threshold_rev = 500;
     vertical_stop_index = 1;
 
-    for i=length(vertical_sum):-1:2; % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
+    for i=length(vertical_sum):-1:2 % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
         difference = abs(vertical_sum(i)-vertical_sum(i-1)); % calculate difference between neighboring intensities
         if difference > peak_threshold_rev  % If statement to determine start time index
             vertical_stop_index=i;
