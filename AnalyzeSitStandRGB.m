@@ -169,17 +169,17 @@ function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
     end
     
     
-    figure;
-    S_smooth = smooth(S);
-    x = 1:size(S_smooth, 1);
-    plot (x, S_smooth);
-    hold on;
-    plot ([1, count], [S_smooth(1), S_smooth(count)],'r^');
-    hold off;
-    axis tight;
-    ylabel('White Intensity');
-    xlabel('Time elapsed in 1 frame');
-    title('SitStand Test Event Intensty Over Time');
+%     figure;
+%     S_smooth = smooth(S);
+%     x = 1:size(S_smooth, 1);
+%     plot (x, S_smooth);
+%     hold on;
+%     plot ([1, count], [S_smooth(1), S_smooth(count)],'r^');
+%     hold off;
+%     axis tight;
+%     ylabel('White Intensity');
+%     xlabel('Time elapsed in 1 frame');
+%     title('SitStand Test Event Intensty Over Time');
     
     %% Calculate the midpoint of the box around the person
     
