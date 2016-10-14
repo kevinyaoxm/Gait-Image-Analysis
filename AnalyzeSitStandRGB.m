@@ -15,6 +15,7 @@ path_diff_mf_threshold3 = 'diff_mf_threshold3';
 path_yuv_images = 'yuv_images';
 path_images_dir = 'images';
 
+mkdir(path_save_dir); % This is the parent directory that contains all processed data of a patient
 mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold1));
 mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold2));
 mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold3));

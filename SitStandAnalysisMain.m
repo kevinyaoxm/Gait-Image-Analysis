@@ -9,8 +9,8 @@ load 'sitStandProcessedDataMap.mat'
 % sitStandProcessedData(1, :) = [12321, leng_smooth];
 % sitStandProcessedData(2, :) = [12322, leng_smooth];
 
-path_videos_dir = './';
-path_save_dir = '';
+path_videos_dir = './tempVideos';
+path_save_dir = './tempProcessedFolder';
 
 files = dir(path_videos_dir);
 fileIndex = find(~[files.isdir]);
@@ -19,8 +19,11 @@ fileIndex = find(~[files.isdir]);
 for i = 1:length(fileIndex)
     
     videoFileName = files(fileIndex(i)).name;
-    path_rgb_video = path_videos_dir + '/' + videoFileName
-    sitStandProcessedDataMap(fileName) = AnalyzeSitStandRGB( path_rgb_video, path_save_dir );
+    parsed = strsplit(videoFileName, '.');
+    patientID = parsed(1)
+    path_rgb_video = strcat(strcat(path_videos_dir, '/'), videoFileName)
+    path_patient_save_dir = strcat(strcat(path_save_dir, '/'), patientID)
+    sitStandProcessedDataMap(patientID) = AnalyzeSitStandRGB( path_rgb_video, path_patient_save_dir );
     
 end
 
