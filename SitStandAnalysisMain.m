@@ -25,7 +25,7 @@ for i = 1:length(fileIndex)
     path_rgb_video = strcat(strcat(path_videos_dir, '/'), videoFileName);
     path_patient_save_dir = strcat(strcat(path_save_dir, '/'), patientID);
     
-    disp(strcat('Processing pratient with ID: ', patientID)); % Display info
+    disp(strcat('======Processing pratient with ID: ', patientID)); % Display info
     
     % Save each analyzed sitStand event intensity to the data map
     try
