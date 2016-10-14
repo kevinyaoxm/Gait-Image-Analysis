@@ -9,16 +9,17 @@ function [] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
 inputRGBVideo = VideoReader(path_rgb_video);
 
 % Create folders to hold the processed fils
-path_diff_threshold = 'diff_threshold';
 path_diff_mf_threshold1 = 'diff_mf_threshold1';
 path_diff_mf_threshold2 = 'diff_mf_threshold2';
 path_diff_mf_threshold3 = 'diff_mf_threshold3';
 path_yuv_images = 'yuv_images';
 path_images_dir = 'images';
 
-mkdir(path_save_dir);
-mkdir(path_images_dir);
-mkdir(path_yuv_images);
+mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold1));
+mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold2));
+mkdir(strcat(strcat(path_save_dir, '/'), path_diff_mf_threshold3));
+mkdir(strcat(strcat(path_save_dir, '/'), path_yuv_images));
+mkdir(strcat(strcat(path_save_dir, '/'), path_images_dir));
 
 fprintf('Reading Input Video and Computing frames in yuv Y-channel.\n') ;
 
@@ -32,9 +33,9 @@ while hasFrame(inputRGBVideo)
     % save image jpg file to images folder
     img = readFrame(inputRGBVideo);
    
-    filename = [sprintf('%03d',i) '.jpg'];
-    fullname = fullfile(path_save_dir,path_images_dir,filename);
-    imwrite(img,fullname);
+    % filename = [sprintf('%03d',i) '.jpg'];
+    % fullname = fullfile(path_save_dir,path_images_dir,filename);
+    % imwrite(img,fullname);
 
     % map jpg image frame from rgb to yuv color space
     % get Y channal of yuv domain
@@ -75,7 +76,7 @@ for i=1:frame_count
   
    % write to the file | diff_threshold2 - "diff_threshold"
    diff_filename2 = [sprintf('%03d',i) '.jpg'];
-   diff_fullname2 = fullfile(path_save_dir,path_diff_threshold,diff_filename2);
+   diff_fullname2 = fullfile(path_save_dir,path_diff_mf_threshold1,diff_filename2);
    imwrite(result_img,diff_fullname2);
    
 end
@@ -89,14 +90,14 @@ for i=1:frame_count
    
    % Read images from files
    imageIndexName = [sprintf('%03d',i) '.jpg'];
-   img = double(imread(fullfile(path_save_dir,path_diff_threshold,imageIndexName)));
+   img = double(imread(fullfile(path_save_dir,path_diff_mf_threshold1,imageIndexName)));
    
    % Use medium filter to clean the noise
    img_mf = medfilt2(img, [3 3]);
    
    % Save processed frames to file
    diff_filename = [sprintf('%03d',i) '.jpg'];
-   diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold1,diff_filename);
+   diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold2,diff_filename);
    imwrite(uint8(img_mf),diff_fullname);
 
 end
@@ -111,28 +112,29 @@ for iter=1:count_3d
     
     % Stack 15 frames for one time and apply 3D medium filter with 3 by 3
     % box
-    i = i+1;
-    imageIndexName1 = [sprintf('%03d',i) '.jpg'];
-    img_stack = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName1)));
+    while( i < frame_count - 1 )
+        i = i+1;
+        imageIndexName1 = [sprintf('%03d',i) '.jpg'];
+        img_stack = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName1)));
 
-    for iter2=2:15
-        i = i+1;
-        imageIndexName = [sprintf('%03d',i) '.jpg'];
-        img = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName)));
-        img_stack = cat(3, img_stack, img);
-    end
-       
-    % Use medium filter to clean the noise
-    B = medfilt3(img_stack,[3 3 3]);  
-   
-    % Write image frames to file
-    i = i-15;
-    for iter2=1:15
-        i = i+1;
-        diff_filename = [sprintf('%03d',i) '.jpg'];
-        diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold3,diff_filename);
-        imwrite(uint8(B(:,:,iter2)),diff_fullname);
-    end
+        for iter2=2:15
+            i = i+1;
+            imageIndexName = [sprintf('%03d',i) '.jpg'];
+            img = double(imread(fullfile(path_save_dir,path_diff_mf_threshold2,imageIndexName)));
+            img_stack = cat(3, img_stack, img);
+        end
+        % Use medium filter to clean the noise
+        B = medfilt3(img_stack,[3 3 3]);  
+
+        % Write image frames to file
+        i = i-15;
+        for iter2=1:15
+            i = i+1;
+            diff_filename = [sprintf('%03d',i) '.jpg'];
+            diff_fullname = fullfile(path_save_dir,path_diff_mf_threshold3,diff_filename);
+            imwrite(uint8(B(:,:,iter2)),diff_fullname);
+        end
+    end 
 end
 %=%=%=%=%=%=%=%= Apply medium filter on time domain ends %=%=%=%=%=%=%=%=%=%=
 
