@@ -1,4 +1,4 @@
-function [] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
+function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
