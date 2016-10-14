@@ -28,13 +28,13 @@ for i = 1:length(fileIndex)
     disp(strcat('======Processing pratient with ID: ', patientID)); % Display info
     
     % Save each analyzed sitStand event intensity to the data map
-    try
-        savedDataMap(patientID) = AnalyzeSitStandRGB( path_rgb_video, path_patient_save_dir );
-        % Just to be safe, save the data to file
-        save('sitStandProcessedDataMap.mat' ,'savedDataMap');
-    catch
-        error(strcat('Error occurred when processing: ', videoFileName));
-    end
+%     try
+    savedDataMap(patientID) = AnalyzeSitStandRGB( path_rgb_video, path_patient_save_dir );
+    % Just to be safe, save the data to file
+    save('sitStandProcessedDataMap.mat' ,'savedDataMap');
+%     catch
+%         error(strcat('Error occurred when processing: ', videoFileName));
+%     end
 end
 
 
