@@ -231,68 +231,69 @@ function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
     leng_smooth = smooth(leng,15);
     
 %     figure;
-%     x = 1:size(leng_smooth, 1);
-%     plot (x, leng_smooth);
-%     hold on;
-%     plot ([1, count], [leng_smooth(1), leng_smooth(count)],'r^');
-%     hold off;
-%     axis tight;
-%     ylabel('Y-coordinate of midpoint');
-%     xlabel('Time elapsed in 1 frame');
-%     title('SitStand Test Event Intensty Over Time');
-%     
-%     % leng_smooth(leng_smooth > 400) = 0;
-%     
-%     fprintf('Computing the time stamp for each Sit-Stand Cycle.\n') ;
-%     
-%     % Find the maxima and minima point
-%     [Maxima,MaxIdx] = findpeaks(leng_smooth, 'MinPeakDistance', 30, 'MinPeakHeight',250);
-%     DataInv = 1.01*max(leng_smooth) - leng_smooth;
-%     [Minima,MinIdx] = findpeaks(DataInv, 'MinPeakHeight', 200, 'MinPeakDistance', 30);
-%     
-%     Maxima = leng_smooth(MaxIdx);
-%     
-%     if length(Maxima) > 6
-%         idx = find(Maxima == max(Maxima),1,'first');
-%         MaxIdx(idx) = [];
-%     end
-%     
-%     if length(Minima) > 5
-%         idx = find(leng_smooth(MinIdx) == min(leng_smooth(MinIdx)),1,'first');
-%         MinIdx(idx) = [];
-%     end
-%     
-%     figure;
-%     x = 1:size(leng_smooth, 1);
-%     plot (x, leng_smooth);
-%     hold on;
-%     plot(MinIdx, leng_smooth(MinIdx),'r^');
-%     plot(MaxIdx, leng_smooth(MaxIdx),'b^');
-%     hold off;
-%     axis tight;
-%     
-%     % Print out the time stamp table for SitStand Test
-%     
-%     timeStamp = MaxIdx;
-%     
-%     SitStandCount = {'1','2','3','4','5'};
-%     T = table;
-%     T.SitStandCount = SitStandCount';
-%     T.Start = timeStamp(1:5);
-%     T.Stop = timeStamp(2:6);
-%     
-%     SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
-%     fprintf('Sit Stand Cycle Duration in frames: \n');
-%     disp(SitStandCycle);
-%     fprintf('Sit Stand Cycle Duration in seconds: \n') ;
-%     disp(SitStandCycle/30);
-%     
-%     figure;
-%     x = 1:length(SitStandCycle);
-%     plot (x, SitStandCycle/30);
-%     ylabel('Sit-Stand Cycle Duration');
-%     xlabel('Sit-Stand Count');
-%     axis([1 5 1 2])
+        x = 1:size(leng_smooth, 1);
+        plot (x, leng_smooth);
+        hold on;
+        plot ([1, count], [leng_smooth(1), leng_smooth(count)],'r^');
+        hold off;
+        axis tight;
+        ylabel('Y-coordinate of midpoint');
+        xlabel('Time elapsed in 1 frame');
+        title('SitStand Test Event Intensty Over Time');
+
+        % leng_smooth(leng_smooth > 400) = 0;
+
+        fprintf('Computing the time stamp for each Sit-Stand Cycle.\n') ;
+
+        % Find the maxima and minima point
+        [Maxima,MaxIdx] = findpeaks(leng_smooth, 'MinPeakDistance', 30, 'MinPeakHeight',250);
+        DataInv = 1.01*max(leng_smooth) - leng_smooth;
+        [Minima,MinIdx] = findpeaks(DataInv, 'MinPeakHeight', 200, 'MinPeakDistance', 30);
+
+        Maxima = leng_smooth(MaxIdx);
+
+        if length(Maxima) > 6
+            idx = find(Maxima == max(Maxima),1,'first');
+            MaxIdx(idx) = [];
+        end
+
+        if length(Minima) > 5
+            idx = find(leng_smooth(MinIdx) == min(leng_smooth(MinIdx)),1,'first');
+            MinIdx(idx) = [];
+        end
+
+        figure;
+        x = 1:size(leng_smooth, 1);
+        plot (x, leng_smooth);
+        hold on;
+        plot(MinIdx, leng_smooth(MinIdx),'r^');
+        plot(MaxIdx, leng_smooth(MaxIdx),'b^');
+        hold off;
+        axis tight;
+        savefig(strcat(strcat(path_save_dir, '/'), 'plot'))
+        % Print out the time stamp table for SitStand Test
+% 
+%         timeStamp = MaxIdx;
+% 
+%         SitStandCount = {'1','2','3','4','5'};
+%         T = table;
+%         T.SitStandCount = SitStandCount';
+%         T.Start = timeStamp(1:5);
+%         T.Stop = timeStamp(2:6);
+% 
+%         SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
+%         fprintf('Sit Stand Cycle Duration in frames: \n');
+%         disp(SitStandCycle);
+%         fprintf('Sit Stand Cycle Duration in seconds: \n') ;
+%         disp(SitStandCycle/30);
+% 
+%         figure;
+%         x = 1:length(SitStandCycle);
+%         plot (x, SitStandCycle/30);
+%         ylabel('Sit-Stand Cycle Duration');
+%         xlabel('Sit-Stand Count');
+%         axis([1 5 1 2])
+%         savefig(strcat(strcat(path_patient_save_dir, '/'), 'table'))
     
     
 end
