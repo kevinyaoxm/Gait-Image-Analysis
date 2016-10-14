@@ -269,26 +269,26 @@ function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
     
     % Print out the time stamp table for SitStand Test
     
-    timeStamp = MaxIdx;
-    
-    SitStandCount = {'1','2','3','4','5'};
-    T = table;
-    T.SitStandCount = SitStandCount';
-    T.Start = timeStamp(1:5);
-    T.Stop = timeStamp(2:6);
-    
-    SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
-    fprintf('Sit Stand Cycle Duration in frames: \n');
-    disp(SitStandCycle);
-    fprintf('Sit Stand Cycle Duration in seconds: \n') ;
-    disp(SitStandCycle/30);
-    
-    figure;
-    x = 1:length(SitStandCycle);
-    plot (x, SitStandCycle/30);
-    ylabel('Sit-Stand Cycle Duration');
-    xlabel('Sit-Stand Count');
-    axis([1 5 1 2])
+%     timeStamp = MaxIdx;
+%     
+%     SitStandCount = {'1','2','3','4','5'};
+%     T = table;
+%     T.SitStandCount = SitStandCount';
+%     T.Start = timeStamp(1:5);
+%     T.Stop = timeStamp(2:6);
+%     
+%     SitStandCycle = timeStamp(2:6) - timeStamp(1:5);
+%     fprintf('Sit Stand Cycle Duration in frames: \n');
+%     disp(SitStandCycle);
+%     fprintf('Sit Stand Cycle Duration in seconds: \n') ;
+%     disp(SitStandCycle/30);
+%     
+%     figure;
+%     x = 1:length(SitStandCycle);
+%     plot (x, SitStandCycle/30);
+%     ylabel('Sit-Stand Cycle Duration');
+%     xlabel('Sit-Stand Count');
+%     axis([1 5 1 2])
     
     
 end
