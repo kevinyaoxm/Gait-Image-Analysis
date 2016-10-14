@@ -38,4 +38,7 @@ for i = 1:length(fileIndex)
 end
 
 
-% save('sitStandProcessedDataMap.mat' ,'savedDataMap');
+%% Load processed data above and graph them
+
+
+
