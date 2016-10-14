@@ -1,6 +1,10 @@
 function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
-    %UNTITLED Summary of this function goes here    
-    %   Function for analyzing the Sit-Stand Test RGB Video
+    % Function for analyzing the Sit-Stand Test RGB Video
+    %
+    % INPUT path_rgb_video: full path of the video to be analyzed
+    %       path_save_dir: full path of the directory name used to save analyzed data 
+    %
+    % OUTPUT leng_smooth: y - SitStand Test Event Intensty Over Time
     
     %% Reading the Input RGB Video
     
