@@ -38,6 +38,7 @@ for i = 1:length(fileIndex)
     %         error(strcat('Error occurred when processing: ', videoFileName));
     %     end
     
+    
     end
 end
 

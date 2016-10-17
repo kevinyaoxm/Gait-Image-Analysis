@@ -198,27 +198,26 @@ function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
             vertical_sum = sum(img,2);
             
             % Find the start_index and end_index of horizontal_sum
-            peak_threshold = 500;
+            peak_threshold = 400;
             vertical_start_index = 1;
-            for i=1:length(vertical_sum)-1 % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
+            for i=1:length(vertical_sum)-1 % Loop through vector vertical_sum - 1 to avoid accessing past the vector
                 difference=abs(vertical_sum(i+1)-vertical_sum(i)); % calculate difference between neighboring intensities
                 if difference > peak_threshold % If statement to determine start time index
                     vertical_start_index=i;
-                    i;
                     break;
                 end
             end
             
-            peak_threshold_rev = 500;
-            vertical_stop_index = 1;
-            
-            for i=length(vertical_sum):-1:2 % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
-                difference = abs(vertical_sum(i)-vertical_sum(i-1)); % calculate difference between neighboring intensities
-                if difference > peak_threshold_rev  % If statement to determine start time index
-                    vertical_stop_index=i;
-                    break;
-                end
-            end
+%             peak_threshold_rev = 500;
+%             vertical_stop_index = 1;
+%             
+%             for i=length(vertical_sum):-1:2 % Loop through vector intensityOverTime - 1 to avoid accessing past the vector
+%                 difference = abs(vertical_sum(i)-vertical_sum(i-1)); % calculate difference between neighboring intensities
+%                 if difference > peak_threshold_rev  % If statement to determine start time index
+%                     vertical_stop_index=i;
+%                     break;
+%                 end
+%             end
             
             %midpoint = vertical_stop_index - vertical_start_index;
             midpoint = vertical_start_index;
@@ -271,6 +270,7 @@ function [leng_smooth] = AnalyzeSitStandRGB( path_rgb_video, path_save_dir )
         hold off;
         axis tight;
         savefig(strcat(strcat(path_save_dir, '/'), 'plot'))
+        
         % Print out the time stamp table for SitStand Test
 % 
 %         timeStamp = MaxIdx;
