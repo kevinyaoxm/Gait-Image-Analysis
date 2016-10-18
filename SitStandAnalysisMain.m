@@ -45,5 +45,16 @@ end
 
 %% Load processed data above and graph them
 
-
+% Each row contains a single person's data 
+% Each column contains the scenario
+y = [1 1 1; 
+     2 2 2; 
+     3 8 9; 
+     2 11 12];
+bar(y)
+xticklabels({'S1','S2','S3','S4'});
+legend('eyes closed', 'normal', 'whatever');
+xlabel('Do whatever');
+ylabel('Do whatever');
+title('Do whatever');
 

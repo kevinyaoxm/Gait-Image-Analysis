@@ -41,5 +41,24 @@ for i = 1:length(fileIndex)
 end
 
 
-%% Load processed data above and graph them
+%% Plot Sit Stand Total Time vs Ground Truth
 
+% Each row [calculated total sitstand cycle, ground truth]
+% Each column contains the person's ID
+y = [15.4 15; 
+     10.5667 9.16; 
+     15.233 15.96; 
+     11.3 10.56;
+     8.6667 9.6;
+     11.5 11.57;
+     12.333 12.8;
+     8.4333 7.54;
+     10.3333 10.07;
+     12.5333 12.03;
+     ];
+bar(y)
+set(gca,'XTickLabel',{'10029', '10030', '10033', '10035', '10037', '10044', '10086', '10141', '10147', '10149'})
+legend('calculated sit stand time', 'ground truth');
+% xlabel('Do whatever');
+ylabel('Time (second)');
+title('Sit Stand Total Time');
